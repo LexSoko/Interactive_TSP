@@ -1,11 +1,15 @@
 import dearpygui.dearpygui as dpg
+import numpy as np 
 
-_Node_Name = "Data-Node"
+_Node_Name = "Annealing-Node"
 
 def check_if_works():
     print(f"{_Node_Name} successfully imported")
-class Node():
-    node_tag = "DataValuesf"
+class Node:
+
+    node_label = "Annealing Node"
+    node_tag = "Annealing"
+
     def __init__(self):
         pass
 
@@ -17,4 +21,81 @@ class Node():
         opencv_setting_dict=None,
         callback=None,
     ):
-        pass
+        tag_node_name = str(node_id) + ':' + self.node_tag
+        
+        tag_node_input01_name = tag_node_name + ":" + "Cities" + ":Input01"
+        tag_node_input01_value_name = tag_node_name +":Cities" + ":Input01Value"
+
+        tag_node_input02_name = tag_node_name + ":" + "Func" + ":Input02"
+        tag_node_input02_value_name = tag_node_name +":Func" + ":Input02Value"
+
+        
+        tag_node_output01_name = tag_node_name + ":" + "Float" + ":Output01"
+        tag_node_output01_value_name = tag_node_name + ':' + "Float" + ':Output01Value'
+
+        self._opencv_setting_dict = opencv_setting_dict
+        small_window_w = self._opencv_setting_dict['result_width']
+        small_window_h = self._opencv_setting_dict['result_height']
+
+        self._default_xdata = 100*np.linspace(0, 1, 30)* np.cos(3*np.linspace(0, 2*np.pi, 30))
+        self._default_ydata = 100 * np.linspace(0, 1, 30)*np.sin(3*np.linspace(0, 2*np.pi, 30))
+
+        with dpg.node(
+            tag = tag_node_name,
+            parent=parent,
+            label = self.node_label
+        ):
+            with dpg.node_attribute(
+                tag= tag_node_input01_name,
+                attribute_type=dpg.mvNode_Attr_Input
+            ):
+                with dpg.plot(
+                    width=small_window_w,
+                    height=small_window_h,
+                    tag = tag_node_input01_value_name,
+                    no_menus=True
+                ):
+                    dpg.add_plot_axis(
+                        dpg.mvXAxis,
+                        tag=tag_node_input01_value_name + 'xaxis',
+                    )
+                    dpg.add_plot_axis(
+                        dpg.mvYAxis,
+                        tag=tag_node_input01_value_name + 'yaxis',
+                    )
+                    dpg.add_line_series(
+                        self._default_xdata,
+                        self._default_ydata,
+                        label= "shortest path",
+                        parent = tag_node_input01_value_name + "yaxis",
+                        tag = tag_node_input01_value_name + "paths"
+                    )
+
+                    dpg.add_scatter_series(
+                        self._default_xdata,
+                        self._default_ydata,
+                        label="Cities Positions",
+                        parent = tag_node_input01_value_name + "yaxis",
+                        tag= tag_node_input01_value_name + "cities_pos"
+                    )
+                    
+        
+        return tag_node_name
+    
+    def update(
+        self,
+        node_id,
+        connection_list,
+        node_image_dict,
+        node_result_dict,
+    ):
+        
+
+        connection_info_src = ''
+        for connection_info in connection_list:
+            connection_info_src = connection_info[0]
+            connection_info_src = connection_info_src.split(':')[:2]
+            connection_info_src = ':'.join(connection_info_src)
+        frame = node_image_dict.get(connection_info_src, None)
+
+        return frame, None

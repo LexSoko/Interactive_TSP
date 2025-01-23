@@ -90,7 +90,7 @@ class Node:
         node_result_dict,
     ):
         
-
+        
         connection_info_src = ''
         for connection_info in connection_list:
             connection_info_src = connection_info[0]

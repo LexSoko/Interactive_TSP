@@ -13,6 +13,7 @@ class Node_editor(object):
     _node_instance_list = {}
     _node_list = []
     _node_link_list = []
+    
     _childwindow_nodeeditor_tag = "node_editor_child"
     _childwindow_sidemenu_tag = "sidemenu_child"
     _last_pos = None
@@ -41,6 +42,7 @@ class Node_editor(object):
         self._terminate_flag = False
         self._side_menu_width = width_sidemenu
         self.setting_dict = setting_dict
+
         if menu_dict is None:
             menu_dict = OrderedDict({
                 'Input Node': 'input_node',
@@ -54,7 +56,7 @@ class Node_editor(object):
             width=self._window_width,
             height=self._window_height
         ):
-            
+            #later implementation
             with dpg.menu_bar(label = 'Menu'):
                 with dpg.menu(label='File'):
                     dpg.add_menu_item(
@@ -84,7 +86,11 @@ class Node_editor(object):
                     )      
             
             #child windows seperate the gui into menu and node editor
-            with dpg.child_window(tag=self._childwindow_nodeeditor_tag,width=self._node_editor_width,height=self._window_height,pos=[self._side_menu_width,0]): 
+            with dpg.child_window(tag=self._childwindow_nodeeditor_tag,
+                                  width=self._node_editor_width,
+                                  height=self._window_height,
+                                  pos=[self._side_menu_width,0]
+                                  ): 
                 #node editor item is initialiezed
                 # tag is for identification as parent 
                 with dpg.node_editor(
@@ -99,7 +105,10 @@ class Node_editor(object):
 
                     pass
 
-            with dpg.child_window(tag= self._childwindow_sidemenu_tag,width=self._side_menu_width, height=self._window_height):
+            with dpg.child_window(tag= self._childwindow_sidemenu_tag,
+                                  width=self._side_menu_width, 
+                                  height=self._window_height
+                                  ):
                 node_source_path = os.path.join(
                     node_dir,
                     "*"
@@ -163,6 +172,7 @@ class Node_editor(object):
                     callback=self._callback_del_key,
                 )
             
+
     # callback runs when user attempts to connect attributes
     def _callback_link(sender, link_data):
         # app_data -> (link_id1, link_id2)
@@ -179,8 +189,7 @@ class Node_editor(object):
         dpg.delete_item(link_data)
 
 
-    def get_node_list(self):
-        return self._node_list
+    
     
     def _callback_create_node(self,sender, data, user_data):
         self._node_id += 1
@@ -205,7 +214,12 @@ class Node_editor(object):
 
         pass
    
-
+    def get_node_list(self):
+        return self._node_list
+    
+    def get_node_instance(self,node_name):
+        return self._node_instance_list.get(node_name,None)
+    
     def _callback_del_key(self):
         pass
 
@@ -214,6 +228,11 @@ class Node_editor(object):
             self._last_pos = dpg.get_item_pos(
                 dpg.get_selected_nodes(self._node_editor_tag)[0])
 
+
+
+
+
+    #maybe for further versions
     def _callback_new_project(self):
         pass
         return

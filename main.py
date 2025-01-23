@@ -22,14 +22,16 @@ def get_settings():
     arg = parser.parse_args()
     return arg.setting
 
-def update(
-        node_editor
+def update_nodes(
+        node_editor,
+        node_image_dict = {},
+        node_results = {}
 ):
     node_list = node_editor.get_node_list()
     viewport_width = dpg.get_viewport_client_width()
     viewport_height = dpg.get_viewport_client_height()
 
-    a = time.time()
+    #updating the window size
     dpg.set_item_width(node_editor._childwindow_nodeeditor_tag, viewport_width- node_editor._side_menu_width)
     dpg.set_item_height(node_editor._childwindow_nodeeditor_tag, viewport_height)
     dpg.set_item_width(node_editor._node_editor_tag, viewport_width- node_editor._side_menu_width)
@@ -37,10 +39,20 @@ def update(
     dpg.set_item_height(node_editor._childwindow_sidemenu_tag, viewport_height)
     dpg.set_item_width(node_editor._node_tag, viewport_width)
     dpg.set_item_height(node_editor._node_tag, viewport_height)
-    b = time.time()
+    for node_name in node_list:
+        node_id , node_name = node_name.split(":")
+        node = node_editor.get_node_instance(node_name)
+        frame, result = node.update(
+            node_id,
+            ["node:node1:node2:node4"],
+            node_image_dict,
+            node_results
+            )
+        pass
 
-    if b-a > 0.01:
-        print(f"######## Update time over 10 ms: {b-a} s #########")
+    
+
+    
     
 def main():
     args_setting = get_settings()
@@ -61,9 +73,13 @@ def main():
     )
     dpg.show_viewport()
     dpg.set_primary_window(f"{node_editor._node_tag}",True)
-   
+    node_image_dict = {}
+    node_results = {}
     while dpg.is_dearpygui_running():
-        update(node_editor)
+        
+        update_nodes(node_editor,
+               node_image_dict,
+               node_results)
         dpg.render_dearpygui_frame()
         
         

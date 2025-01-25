@@ -65,7 +65,7 @@ def main():
     dpg.create_context()
     dpg.setup_dearpygui()
     dpg.create_viewport(
-        title =" Hallo Max",
+        title ="Interactive TSP",
         width = setting_dict['editor_width'],
         height = setting_dict['editor_height']
     )

@@ -1,14 +1,14 @@
 import dearpygui.dearpygui as dpg
 import numpy as np 
 from node_editor.general import retrieve_matrix , dpg_get_value , dpg_set_value
-_Node_Name = "Annealing-Node"
+_Node_Name = "Show-Node"
 
 def check_if_works():
     print(f"{_Node_Name} successfully imported")
 class Node:
 
-    node_label = "Annealing Node"
-    node_tag = "Annealing"
+    node_label = "Show-Cities Node"
+    node_tag = "Show_Cities"
 
     def __init__(self):
         pass
@@ -26,20 +26,14 @@ class Node:
         tag_node_input01_name = tag_node_name + ":" + "Cities" + ":Input01"
         tag_node_input01_value_name = tag_node_name +":Cities" + ":Input01Value"
 
-        tag_node_input02_name = tag_node_name + ":" + "Func" + ":Input02"
-        tag_node_input02_value_name = tag_node_name +":Func" + ":Input02Value"
-
-        
-        tag_node_output01_name = tag_node_name + ":" + "Float" + ":Output01"
-        tag_node_output01_value_name = tag_node_name + ':' + "Float" + ':Output01Value'
 
         self._opencv_setting_dict = opencv_setting_dict
         small_window_w = self._opencv_setting_dict['result_width']
         small_window_h = self._opencv_setting_dict['result_height']
 
 
-        self._default_xdata = 100*np.linspace(0, 1, 30)* np.cos(3*np.linspace(0, 2*np.pi, 30))
-        self._default_ydata = 100 * np.linspace(0, 1, 30)*np.sin(3*np.linspace(0, 2*np.pi, 30))
+        self._default_xdata = 100*np.linspace(0, 1, 30)* np.sin(3*np.linspace(0, 2*np.pi, 30))
+        self._default_ydata = 100 * np.linspace(0, 1, 30)*np.cos(3*np.linspace(0, 2*np.pi, 30))
 
         with dpg.node(
             tag = tag_node_name,
@@ -120,10 +114,6 @@ class Node:
                     tag_node_input01_value_name +"xaxis", 
                     x_min, 
                     x_max)
-                #dpg.set_axis_limits_auto(
-                #    tag_node_input01_value_name +"yaxis")
-                #dpg.set_axis_limits_auto(
-                #    tag_node_input01_value_name +"xaxis")
         
         
 

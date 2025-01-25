@@ -1,15 +1,17 @@
 import dearpygui.dearpygui as dpg
 import numpy as np 
 from node_editor.general import retrieve_matrix , dpg_get_value , dpg_set_value
-_Node_Name = "Annealing-Node"
+import numsolvers.TSP as tsp
+
+_Node_Name = "Mixed-Node"
 
 def check_if_works():
     print(f"{_Node_Name} successfully imported")
 class Node:
 
-    node_label = "Annealing Node"
-    node_tag = "Annealing"
-
+    node_label = "Mixed Node"
+    node_tag = "Mixed"
+    received_data = {}
     def __init__(self):
         pass
 
@@ -37,7 +39,7 @@ class Node:
         small_window_w = self._opencv_setting_dict['result_width']
         small_window_h = self._opencv_setting_dict['result_height']
 
-
+        self.received_data[tag_node_name] = False
         self._default_xdata = 100*np.linspace(0, 1, 30)* np.cos(3*np.linspace(0, 2*np.pi, 30))
         self._default_ydata = 100 * np.linspace(0, 1, 30)*np.sin(3*np.linspace(0, 2*np.pi, 30))
 
@@ -79,7 +81,7 @@ class Node:
                         parent = tag_node_input01_value_name + "yaxis",
                         tag= tag_node_input01_value_name + "cities_pos"
                     )
-                    
+               
         
         return tag_node_name
     
@@ -95,7 +97,7 @@ class Node:
         tag_node_input01_value_name = tag_node_name +":Cities" + ":Input01Value"
         
         link = connection_list.get(tag_node_input01_name, None)
-        if link is not None:
+        if link is not None and self.received_data[tag_node_name] == False:
             Cities = retrieve_matrix(link[0] + "Value")
 
             dpg_set_value(
@@ -111,7 +113,6 @@ class Node:
                 x_min = int(np.min(Cities[0]) - 0.1*np.max(Cities[0]))
                 x_max = int(np.max(Cities[0]) + 0.1*np.max(Cities[0]))
                 
-                
                 dpg.set_axis_limits(
                     tag_node_input01_value_name +"yaxis", 
                     y_min,
@@ -120,10 +121,18 @@ class Node:
                     tag_node_input01_value_name +"xaxis", 
                     x_min, 
                     x_max)
-                #dpg.set_axis_limits_auto(
-                #    tag_node_input01_value_name +"yaxis")
-                #dpg.set_axis_limits_auto(
-                #    tag_node_input01_value_name +"xaxis")
+            print("hallo")
+            self.received_data[tag_node_name] = True
+        elif link is None:
+            self.received_data[tag_node_name] = False
+            dpg_set_value(
+                tag_node_input01_value_name + "cities_pos",
+                [self._default_xdata,self._default_ydata])
+            dpg_set_value(
+                tag_node_input01_value_name + "paths",
+                [self._default_xdata,self._default_ydata])
+            
+            
         
         
 

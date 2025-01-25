@@ -174,17 +174,22 @@ class Node_editor(object):
             
 
     # callback runs when user attempts to connect attributes
-    def _callback_link(sender, link_data):
+    def _callback_link(self,sender, link_data):
         # app_data -> (link_id1, link_id2)
-        print(sender)
-        print(link_data)
+        if self._debug:
+            print("### link ###")
+            print(f"sender: {sender}")
+            print(f"link data: {link_data}")
+
         output_type = link_data[0].split(":")[2]
         input_type = link_data[1].split(":")[2]
         if input_type == output_type:
             dpg.add_node_link(link_data[0], link_data[1], parent=sender)
+        else:
+            print("Datatypes dont match")
 
     # callback runs when user attempts to disconnect attributes
-    def _callback_delink(sender, link_data):
+    def _callback_delink(self,sender, link_data):
     # app_data -> link_id
         dpg.delete_item(link_data)
 

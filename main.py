@@ -28,6 +28,8 @@ def update_nodes(
         node_results = {}
 ):
     node_list = node_editor.get_node_list()
+    connection_dict = node_editor.get_node_connection_dict()
+
     viewport_width = dpg.get_viewport_client_width()
     viewport_height = dpg.get_viewport_client_height()
 
@@ -41,10 +43,11 @@ def update_nodes(
     dpg.set_item_height(node_editor._node_tag, viewport_height)
     for node_name in node_list:
         node_id , node_name = node_name.split(":")
+        
         node = node_editor.get_node_instance(node_name)
         frame, result = node.update(
             node_id,
-            ["node:node1:node2:node4"],
+            connection_dict,
             node_image_dict,
             node_results
             )

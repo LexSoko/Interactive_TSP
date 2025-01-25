@@ -185,6 +185,7 @@ class Node_editor(object):
         input_type = link_data[1].split(":")[2]
         if input_type == output_type:
             dpg.add_node_link(link_data[0], link_data[1], parent=sender)
+            self._node_connection_dict[link_data[1]] = link_data
         else:
             print("Datatypes dont match")
 
@@ -218,7 +219,9 @@ class Node_editor(object):
         
 
         pass
-   
+    def get_node_connection_dict(self):
+        return self._node_connection_dict
+
     def get_node_list(self):
         return self._node_list
     

@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 import numpy as np 
-
+from node_editor.general import retrieve_matrix , dpg_get_value , dpg_set_value
 _Node_Name = "Annealing-Node"
 
 def check_if_works():
@@ -37,6 +37,7 @@ class Node:
         small_window_w = self._opencv_setting_dict['result_width']
         small_window_h = self._opencv_setting_dict['result_height']
 
+
         self._default_xdata = 100*np.linspace(0, 1, 30)* np.cos(3*np.linspace(0, 2*np.pi, 30))
         self._default_ydata = 100 * np.linspace(0, 1, 30)*np.sin(3*np.linspace(0, 2*np.pi, 30))
 
@@ -57,11 +58,11 @@ class Node:
                 ):
                     dpg.add_plot_axis(
                         dpg.mvXAxis,
-                        tag=tag_node_input01_value_name + 'xaxis',
+                        tag=tag_node_input01_value_name + "xaxis",
                     )
                     dpg.add_plot_axis(
                         dpg.mvYAxis,
-                        tag=tag_node_input01_value_name + 'yaxis',
+                        tag=tag_node_input01_value_name + "yaxis",
                     )
                     dpg.add_line_series(
                         self._default_xdata,
@@ -89,13 +90,36 @@ class Node:
         node_image_dict,
         node_result_dict,
     ):
+        tag_node_name = str(node_id) + ':' + self.node_tag
+        tag_node_input01_name = tag_node_name + ":" + "Cities" + ":Input01"
+        tag_node_input01_value_name = tag_node_name +":Cities" + ":Input01Value"
+        
+        link = connection_list.get(tag_node_input01_name, None)
+        if link is not None:
+            Cities = retrieve_matrix(link[0] + "Value")
+            print(Cities)
+            dpg_set_value(
+                tag_node_input01_value_name + "cities_pos",
+                [np.array(Cities[0]), np.array(Cities[1])])
+            dpg_set_value(
+                tag_node_input01_value_name + "paths",
+                [np.array(Cities[0]), np.array(Cities[1])])   
+            #if dpg.does_item_exist(tag_node_input01_value_name +"yaxis") and dpg.does_item_exist(tag_node_input01_value_name +"xaxis"):
+            #    print("trying")
+            #    y_min = int(np.min(Cities[1]) - 0.1*np.min(Cities[1]))
+            #    y_max = int(np.max(Cities[1]) + 0.1*np.max(Cities[1]))
+            #    x_min = int(np.min(Cities[0]) - 0.1*np.min(Cities[0]))
+            #    x_max = int(np.max(Cities[0]) + 0.1*np.max(Cities[0]))
+            #    print(y_min, y_max, x_min, x_max)
+            #    #dpg.set_axis_limits(
+            #    #    tag_node_input01_value_name +"yaxis", 
+            #    #    y_min,
+            #    #    y_max)
+            #    #dpg.set_axis_limits(
+            #    #    tag_node_input01_value_name +"xaxis", 
+            #    #    x_min, 
+            #    #    x_max)
         
         
-        connection_info_src = ''
-        for connection_info in connection_list:
-            connection_info_src = connection_info[0]
-            connection_info_src = connection_info_src.split(':')[:2]
-            connection_info_src = ':'.join(connection_info_src)
-        frame = node_image_dict.get(connection_info_src, None)
 
-        return frame, None
+        return None, None

@@ -11,7 +11,9 @@ class Node:
 
     node_label = "Mixed Node"
     node_tag = "Mixed"
+
     received_data = {}
+    run_dict = {}
     def __init__(self):
         pass
 
@@ -40,8 +42,10 @@ class Node:
         small_window_h = self._opencv_setting_dict['result_height']
 
         self.received_data[tag_node_name] = False
+        self.run_dict[tag_node_name] = False
         self._default_xdata = 100*np.linspace(0, 1, 30)* np.cos(3*np.linspace(0, 2*np.pi, 30))
         self._default_ydata = 100 * np.linspace(0, 1, 30)*np.sin(3*np.linspace(0, 2*np.pi, 30))
+        self._default_limits = (-110,110,-110,110)
 
         with dpg.node(
             tag = tag_node_name,
@@ -81,6 +85,8 @@ class Node:
                         parent = tag_node_input01_value_name + "yaxis",
                         tag= tag_node_input01_value_name + "cities_pos"
                     )
+                dpg.add_button(label= "RUN", callback=self._call_back_run, user_data=tag_node_name)
+                dpg.add_button(label= "STOP", callback=self._call_back_stop, user_data=tag_node_name)
                
         
         return tag_node_name
@@ -121,8 +127,9 @@ class Node:
                     tag_node_input01_value_name +"xaxis", 
                     x_min, 
                     x_max)
-            print("hallo")
+                
             self.received_data[tag_node_name] = True
+
         elif link is None:
             self.received_data[tag_node_name] = False
             dpg_set_value(
@@ -132,8 +139,38 @@ class Node:
                 tag_node_input01_value_name + "paths",
                 [self._default_xdata,self._default_ydata])
             
-            
+            y_min, y_max, x_min, x_max = self._default_limits
+            dpg.set_axis_limits(
+                    tag_node_input01_value_name +"yaxis", 
+                    y_min,
+                    y_max)
+            dpg.set_axis_limits(
+                    tag_node_input01_value_name +"xaxis", 
+                    x_min, 
+                    x_max)
         
+        if self.run_dict[tag_node_name] == True:
+            print("LEEETS GOOO BABY")
+        else:
+            print("OH NOOOOOOO")
         
 
         return None, None
+    
+    def _call_back_run(
+            self,
+            sender,
+            app_data,
+            user_data
+    ):
+        self.run_dict[user_data] = True
+        pass
+
+    def _call_back_stop(
+            self,
+            sender,
+            app_data,
+            user_data
+    ):
+        self.run_dict[user_data] = False
+        pass

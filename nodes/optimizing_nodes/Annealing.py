@@ -1,6 +1,8 @@
 import dearpygui.dearpygui as dpg
 import numpy as np 
 from node_editor.general import retrieve_matrix , dpg_get_value , dpg_set_value
+import numsolvers.TSP as tsp
+
 _Node_Name = "Annealing-Node"
 
 def check_if_works():
@@ -111,7 +113,6 @@ class Node:
                 x_min = int(np.min(Cities[0]) - 0.1*np.max(Cities[0]))
                 x_max = int(np.max(Cities[0]) + 0.1*np.max(Cities[0]))
                 
-                
                 dpg.set_axis_limits(
                     tag_node_input01_value_name +"yaxis", 
                     y_min,
@@ -120,10 +121,7 @@ class Node:
                     tag_node_input01_value_name +"xaxis", 
                     x_min, 
                     x_max)
-                #dpg.set_axis_limits_auto(
-                #    tag_node_input01_value_name +"yaxis")
-                #dpg.set_axis_limits_auto(
-                #    tag_node_input01_value_name +"xaxis")
+            
         
         
 

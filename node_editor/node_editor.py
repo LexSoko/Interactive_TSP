@@ -4,6 +4,7 @@ from glob import glob
 import os
 import numpy as np
 import importlib
+from node_editor.general import dpg_get_value, dpg_set_value
 class Node_editor(object):
     
     _node_id = 0
@@ -192,6 +193,14 @@ class Node_editor(object):
     # callback runs when user attempts to disconnect attributes
     def _callback_delink(self,sender, link_data):
     # app_data -> link_id
+        if self._debug:
+            print("### delink link ###")
+            print(f"sender: {sender}")
+            print(f"link data: {link_data}")
+        config = dpg.get_item_configuration(link_data)
+        destination = config["attr_2"]
+        self._node_connection_dict.pop(destination) 
+        
         dpg.delete_item(link_data)
 
 
@@ -229,6 +238,14 @@ class Node_editor(object):
         return self._node_instance_list.get(node_name,None)
     
     def _callback_del_key(self):
+    
+        #if len(dpg.get_selected_links(self._node_editor_tag)) > 0:
+        #    item_id = dpg.get_selected_links(self._node_editor_tag)
+        #    config = dpg.get_item_configuration(item_id[0])
+        #    destination = config["attr_2"]
+        #    self._node_connection_dict.pop(destination) 
+        #    dpg.delete_item(item_id)
+
         pass
 
     def _callback_save_last_pos(self):

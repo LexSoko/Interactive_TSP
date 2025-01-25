@@ -1,25 +1,36 @@
 import dearpygui.dearpygui as dpg
 
-# Initialize Dear PyGui context
 dpg.create_context()
 
-# Load the custom icon (ensure the image exists and is in the correct path)
-icon_path = "icon.png"  # Replace with the path to your icon file
-#icon_image = dpg.add_static_texture(width=32, height=32, default_value=[255, 0, 0, 255])  # Placeholder (create icon texture)
-icon_image = dpg.load_image(icon_path)[0]  # Load the actual image from the file
+# callback runs when user attempts to connect attributes
+def link_callback(sender, app_data):
+    # app_data -> (link_id1, link_id2)
+    dpg.add_node_link(app_data[0], app_data[1], parent=sender)
 
-# Create the window and set the viewport icon for the taskbar thumbnail
-dpg.create_viewport(title="Custom Thumbnail", width=600, height=400)
-dpg.set_viewport_icon(icon_image)
+# callback runs when user attempts to disconnect attributes
+def delink_callback(sender, app_data):
+    # app_data -> link_id
+    dpg.delete_item(app_data)
 
-# Create the window and the content
-with dpg.window(label="Main Window"):
-    dpg.add_text("Custom Taskbar Thumbnail Example")
+with dpg.window(label="Tutorial", width=400, height=400):
 
-# Setup and show the window
+    with dpg.node_editor(callback=link_callback, delink_callback=delink_callback):
+        with dpg.node(label="Node 1"):
+            with dpg.node_attribute(label="Node A1"):
+                dpg.add_input_float(label="F1", width=150)
+
+            with dpg.node_attribute(label="Node A2", attribute_type=dpg.mvNode_Attr_Output):
+                dpg.add_input_float(label="F2", width=150)
+
+        with dpg.node(label="Node 2"):
+            with dpg.node_attribute(label="Node A3"):
+                dpg.add_input_float(label="F3", width=200)
+
+            with dpg.node_attribute(label="Node A4", attribute_type=dpg.mvNode_Attr_Output):
+                dpg.add_input_float(label="F4", width=200)
+
+dpg.create_viewport(title='Custom Title', width=800, height=600)
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.start_dearpygui()
-
-# Clean up the context after use
 dpg.destroy_context()

@@ -32,8 +32,8 @@ class Node():
         small_window_h = self._opencv_setting_dict['input_window_height'] + 100
 
         self.updated_table = False
-        self._default_xdata = np.array([])
-        self._default_ydata = np.array([])
+        self._default_xdata = np.array([4,2,0])
+        self._default_ydata = np.array([4,2,0])
 
         
 

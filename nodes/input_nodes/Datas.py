@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 import numpy as np
-
+from node_editor.general import dpg_set_value
 _Node_Name = "Data-Node"
 
 def check_if_works():
@@ -52,43 +52,36 @@ class Node():
                     height=small_window_h,
                 ):
                     with dpg.table(header_row=True,
-                                   tag=tag_node_output01_value_name,
+                                   tag=tag_node_input01_value_name,
                                    width= small_window_w,
                                    height=small_window_h,
                                    policy=dpg.mvTable_SizingStretchProp,
                                    resizable=False,
                                    ):
 
-                        dpg.add_table_column(label="x coordinate", parent=tag_node_output01_value_name)
-                        dpg.add_table_column(label="y coordinate", parent=tag_node_output01_value_name)
+                        dpg.add_table_column(label="x coordinate", parent=tag_node_input01_value_name)
+                        dpg.add_table_column(label="y coordinate", parent=tag_node_input01_value_name)
                         for xi, yi in zip(self._default_xdata,self._default_ydata):
-                            row_tag = dpg.add_table_row(parent=tag_node_output01_value_name)
+                            row_tag = dpg.add_table_row(parent=tag_node_input01_value_name)
                             dpg.add_input_float(default_value=xi,parent=row_tag)
                             dpg.add_input_float(default_value=yi,parent=row_tag)
 
                 with dpg.plot(show=False):
                     dpg.add_plot_axis(
                         dpg.mvXAxis,
-                        tag=tag_node_input01_value_name + "xaxis",
+                        tag=tag_node_output01_value_name + "xaxis",
                     )
                     dpg.add_plot_axis(
                         dpg.mvYAxis,
-                        tag=tag_node_input01_value_name + "yaxis",
+                        tag=tag_node_output01_value_name + "yaxis",
                     )
-                    dpg.add_line_series(
-                        self._default_xdata,
-                        self._default_ydata,
-                        label= "shortest path",
-                        parent = tag_node_input01_value_name + "yaxis",
-                        tag = tag_node_input01_value_name + "paths"
-                    )        
                     dpg.add_scatter_series(
                         self._default_xdata,
                         self._default_ydata,
                         label="Cities Positions",
                         show=False,
-                        parent=tag_node_input01_value_name + "yaxis",
-                        tag= tag_node_input01_value_name + "cities_pos"
+                        parent=tag_node_output01_value_name + "yaxis",
+                        tag= tag_node_output01_value_name + "cities_pos"
                     )
                 
                 with dpg.file_dialog(
@@ -96,14 +89,14 @@ class Node():
                     show=False,
                     callback=self.callback_file_dialog,
                     id=str(node_id) +":file_dialog_data_id",
-                    user_data=tag_node_output01_value_name,
+                    user_data=[tag_node_input01_value_name,tag_node_output01_value_name],
                     width=700 ,
                     height=400
                 ):
                     dpg.add_file_extension(".csv")
                 
                 dpg.add_button(label="Select Data", callback= lambda: dpg.show_item(str(node_id) +":file_dialog_data_id"))
-                #dpg.add_button(label="retrieve matrix", callback=self.retrieve_matrix, user_data=tag_node_output01_value_name)
+                
 
             
         return tag_node_name      
@@ -140,7 +133,12 @@ class Node():
             self._default_xdata = data[0]
             self._default_ydata = data[1]
         
-        self.update_table_contents(user_data)
+        self.update_table_contents(user_data[0])
+
+        dpg_set_value(
+                user_data[1] + "cities_pos",
+                [self._default_xdata,self._default_ydata])
+        
 
     
     def update_table_contents(

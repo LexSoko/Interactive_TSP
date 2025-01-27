@@ -89,8 +89,14 @@ class Node:
         tag_node_input01_value_name = tag_node_name +":Cities" + ":Input01Value"
         
         link = connection_list.get(tag_node_input01_name, None)
+
         if link is not None:
-            Cities = retrieve_matrix(link[0] + "Value")
+            
+            try:
+                Cities = retrieve_matrix(link[0] + "Value")
+            except: 
+                Cities = dpg_get_value(link[0] + "Value" + "cities_pos")
+
 
             dpg_set_value(
                 tag_node_input01_value_name + "cities_pos",

@@ -129,7 +129,7 @@ def create_diversity(cities,n = 2):
     return np.array(population)
     
 
-def run_mixed(N,temp_func):
+def run_mixed_fixedN(N,temp_func):
     time1 = time.time()
     for k in range(N):
         temp = temp_func(k)
@@ -142,6 +142,19 @@ def run_mixed(N,temp_func):
     print(f"calculation took : {time2 - time1 } s")
     return all_cities_specimen, all_cities_lenghts
 
+def run_mixed(all_cities_specimen, all_cities_lenghts,number_mutations,temp):
+    
+    
+        
+    survivors = choose_survivors(all_cities_specimen,all_cities_lenghts)
+    all_cities_specimen = mate(survivors)
+    for n in range(number_mutations):        
+        all_cities_specimen , all_cities_lenghts = mutation(all_cities_specimen,temp,all_cities_lenghts)
+    all_cities_lenghts = calculate_lenght(all_cities_specimen)
+
+    #index_shortest_path = np.argmin(all_cities_lenghts)
+    
+    return all_cities_specimen, all_cities_lenghts
 
 def generate_plot(all_cities_specimen,all_cities_lenghts, save = True):
     fig2, ax2  = plt.subplots(4,2, figsize = (16,12))

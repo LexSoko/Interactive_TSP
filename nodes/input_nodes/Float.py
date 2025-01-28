@@ -8,7 +8,7 @@ def check_if_works():
     print(f"{_Node_Name} successfully imported")
 
 class Node:
-    _ver = '0.0.1'
+    
 
     node_label = 'Float Value'
     node_tag = 'FloatValue'

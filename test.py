@@ -2,34 +2,21 @@ import dearpygui.dearpygui as dpg
 
 dpg.create_context()
 
-# callback runs when user attempts to connect attributes
-def link_callback(sender, app_data):
-    # app_data -> (link_id1, link_id2)
-    dpg.add_node_link(app_data[0], app_data[1], parent=sender)
+with dpg.node_editor():
+    with dpg.node(label="Example Node") as node:
+        with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Input, tag="input_attr"):
+            dpg.add_text("Input")
+        
+        # Offset the input node attribute to a specific position
+        dpg.set_item_pos("input_attr", [0, 50])  # Adjust height as needed
 
-# callback runs when user attempts to disconnect attributes
-def delink_callback(sender, app_data):
-    # app_data -> link_id
-    dpg.delete_item(app_data)
+        with dpg.node_attribute(attribute_type=dpg.mvNode_Attr_Output, tag="output_attr"):
+            dpg.add_text("Output")
+        
+        # Offset the output node attribute to the same height
+        dpg.set_item_pos("output_attr", [200, 50])  # Adjust x (horizontal distance) as needed
 
-with dpg.window(label="Tutorial", width=400, height=400):
-
-    with dpg.node_editor(callback=link_callback, delink_callback=delink_callback):
-        with dpg.node(label="Node 1"):
-            with dpg.node_attribute(label="Node A1"):
-                dpg.add_input_float(label="F1", width=150)
-
-            with dpg.node_attribute(label="Node A2", attribute_type=dpg.mvNode_Attr_Output):
-                dpg.add_input_float(label="F2", width=150)
-
-        with dpg.node(label="Node 2"):
-            with dpg.node_attribute(label="Node A3"):
-                dpg.add_input_float(label="F3", width=200)
-
-            with dpg.node_attribute(label="Node A4", attribute_type=dpg.mvNode_Attr_Output):
-                dpg.add_input_float(label="F4", width=200)
-
-dpg.create_viewport(title='Custom Title', width=800, height=600)
+dpg.create_viewport(title='Custom Node Editor', width=600, height=400)
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.start_dearpygui()

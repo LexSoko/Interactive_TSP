@@ -36,7 +36,6 @@ def retrieve_matrix(
 
 def dpg_set_value(tag, value):
     if dpg.does_item_exist(tag):
-        
         dpg.set_value(tag, value)
 
 

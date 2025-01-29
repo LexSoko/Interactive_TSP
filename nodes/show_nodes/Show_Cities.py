@@ -1,7 +1,7 @@
 import dearpygui.dearpygui as dpg
 import numpy as np 
 from node_editor.general import retrieve_matrix , dpg_get_value , dpg_set_value
-_Node_Name = "Show-Node"
+_Node_Name = "Show-Cities-Node"
 
 def check_if_works():
     print(f"{_Node_Name} successfully imported")

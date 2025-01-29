@@ -57,11 +57,11 @@ class Node:
         tag_node_output01_name = tag_node_name + ":Cities" + ":Output01"
         tag_node_output01_value_name = tag_node_name + ":Cities" + ':Output01Value'
 
-        tag_node_output02_name = tag_node_name + ":DataArray" +":Output02" 
-        tag_node_output02_value_name = tag_node_name + ":DataArray" +":Output02Value"
+        tag_node_output02_name = tag_node_name + ":Float" +":Output02" 
+        tag_node_output02_value_name = tag_node_name + ":Float" +":Output02Value"
         
-        tag_node_output03_name = tag_node_name + ":DataArray" +":Output03" 
-        tag_node_output03_value_name = tag_node_name + ":DataArray" +":Output03Value"
+        tag_node_output03_name = tag_node_name + ":Float" +":Output03" 
+        tag_node_output03_value_name = tag_node_name + ":Float" +":Output03Value"
 
         self._opencv_setting_dict = opencv_setting_dict
         small_window_w = self._opencv_setting_dict['process_width']
@@ -180,18 +180,32 @@ class Node:
             
             with dpg.node_attribute(
                 tag= tag_node_output02_name,
-                label= "Current Energy",
+                label= "Current Lenght1",
                 attribute_type=dpg.mvNode_Attr_Output
             ):
+                dpg.add_drag_float(
+                                    tag=tag_node_output02_value_name,
+                                    label = "Current Lenght",
+                                    width = 50,
+                                    default_value=0.0,
+                                    show=False
+                                )
                 with dpg.group(horizontal=True):
                     dpg.add_spacer(width=small_window_w-130)
-                    dpg.add_text("Current Energy")    
+                    dpg.add_text("Current Lenght")    
 
             with dpg.node_attribute(
                 tag= tag_node_output03_name,
                 label= "Current Temp",
                 attribute_type=dpg.mvNode_Attr_Output,
             ):
+                dpg.add_drag_float(
+                                    tag=tag_node_output03_value_name,
+                                    label = "Current Lenght",
+                                    width = 50,
+                                    default_value=0.0,
+                                    show=False
+                                )
                 with dpg.group(horizontal=True):
                     dpg.add_spacer(width=small_window_w-130)
                     dpg.add_text("Current Temp")    
@@ -214,6 +228,12 @@ class Node:
         
         tag_node_output01_name = tag_node_name + ":" + "Cities" + ":Output01"
         tag_node_output01_value_name = tag_node_name + ":Cities" + ':Output01Value'
+
+        tag_node_output02_name = tag_node_name + ":Float" +":Output02" 
+        tag_node_output02_value_name = tag_node_name + ":Float" +":Output02Value"
+        
+        tag_node_output03_name = tag_node_name + ":Float" +":Output03" 
+        tag_node_output03_value_name = tag_node_name + ":Float" +":Output03Value"
 
         link = connection_list.get(tag_node_input01_name, None)
        
@@ -268,10 +288,10 @@ class Node:
                     x_max)
         
         if self.run_dict[tag_node_name] == True:
-            #print("LEEETS GOOO BABY")
+            
             self.k_indecces[tag_node_name] += 1
             #print(f"k index = {self.k_indecces[tag_node_name]} tag_node_name = {tag_node_name}")
-            temp = 10*self.k_indecces[tag_node_name]**(-0.1)
+            temp = self.tstart_dict[tag_node_name]*self.k_indecces[tag_node_name]**(-self.q_dict[tag_node_name])
             #print(f"temp = {temp}")
             all_cities_specimen, all_cities_lenghts = tsp.run_mixed(
                 self.all_cities_specimen_dict[tag_node_name],
@@ -282,15 +302,25 @@ class Node:
             self.all_cities_specimen_dict[tag_node_name] = all_cities_specimen
             self.all_cities_lenghts_dict[tag_node_name] = all_cities_lenghts
             best_route = np.array(all_cities_specimen[np.argmin(all_cities_lenghts)])
+            #print(f"number pop {len(all_cities_lenghts)}")
             #print(f"best route = {best_route}")
+            
             dpg_set_value(
                 tag_node_output01_value_name + "cities_pos",
                 [np.array(best_route.T[0]),np.array(best_route.T[1])])
             dpg_set_value(
                 tag_node_output01_value_name + "paths",
                 [np.array(best_route.T[0]),np.array(best_route.T[1])])
-
+            dpg_set_value(
+                tag_node_output02_value_name,
+                all_cities_lenghts[np.argmin(all_cities_lenghts)]
+            )
+            dpg_set_value(
+                tag_node_output03_value_name,
+                temp
+            )
         #else:
+
             #print("OH NOOOOOOO")
         
 

@@ -26,6 +26,8 @@ class Node:
         tag_node_input01_name = tag_node_name + ":" + "Cities" + ":Input01"
         tag_node_input01_value_name = tag_node_name +":Cities" + ":Input01Value"
 
+        tag_node_input02_name = tag_node_name + ":" + "Str" + ":Input02"
+        tag_node_input02_value_name = tag_node_name +":Str" + ":Input02Value"
 
         self._opencv_setting_dict = opencv_setting_dict
         small_window_w = self._opencv_setting_dict['result_width']
@@ -73,6 +75,20 @@ class Node:
                         parent = tag_node_input01_value_name + "yaxis",
                         tag= tag_node_input01_value_name + "cities_pos"
                     )
+                    with dpg.file_dialog(
+                        directory_selector=True,
+                        show=False,
+                        callback=self.callback_file_dialog,
+                        id=str(node_id) +":file_dialog_data_id",
+                        user_data=tag_node_input01_value_name+ "cities_pos",
+                        width=700 ,
+                        height=400
+                        ):
+                        dpg.add_file_extension(".csv")
+                with dpg.group(horizontal=True):
+                    dpg.add_input_text(width = small_window_w*0.2, tag=tag_node_input02_value_name)
+                    dpg.add_button(label="Save",user_data=[tag_node_input02_value_name,tag_node_input01_value_name+ "cities_pos"],callback=self.call_back_save)
+                    dpg.add_button(label="Save to", callback= lambda: dpg.show_item(str(node_id) +":file_dialog_data_id"), user_data=tag_node_input01_value_name+ "cities_pos")
                     
         
         return tag_node_name
@@ -124,3 +140,33 @@ class Node:
         
 
         return None, None
+    
+
+    def callback_file_dialog(
+            self,
+            sender,
+            app_data,
+            user_data
+            ):
+        
+        print("###### filedialog ######")
+        print("Sender: ", sender)
+        print("App Data: ", app_data)
+        print("User Data: ", user_data)
+        print("#########################")
+        cities = dpg_get_value(user_data)
+        np.savetxt(app_data["file_path_name"],np.array(cities).T,delimiter=";")
+
+       
+    def call_back_save(
+            self,
+            sender,
+            app_data,
+            user_data
+            ):
+        filename = dpg_get_value(user_data[0])
+        cities = dpg_get_value(user_data[1])
+        path_cities = "./results/cities_pos/"
+        np.savetxt(path_cities+ filename,np.array(cities).T,delimiter=";")
+       
+        

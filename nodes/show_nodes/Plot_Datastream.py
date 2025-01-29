@@ -14,6 +14,8 @@ class Node:
     current_data_dict = {}
     lenght_datastream_dict = {}
     inf_data_dict = {}
+    stop_dict = {}
+
     def __init__(self):
         pass
 
@@ -36,10 +38,14 @@ class Node:
         tag_node_input03_name = tag_node_name + ":" + "Bool" + ":Input03"
         tag_node_input03_value_name = tag_node_name +":Bool" + ":Input03Value"
 
+        tag_node_input04_name = tag_node_name + ":" + "Str" + ":Input04"
+        tag_node_input04_value_name = tag_node_name +":Str" + ":Input04Value"
+
         self._opencv_setting_dict = opencv_setting_dict
         small_window_w = self._opencv_setting_dict['result_width']
         small_window_h = self._opencv_setting_dict['result_height']
-
+        
+        self.stop_dict[tag_node_name] = False
         self.lenght_datastream_dict[tag_node_name] = 400
         self.inf_data_dict[tag_node_name] = False
         self.k_indecces[tag_node_name] = [0]
@@ -77,6 +83,16 @@ class Node:
                         parent = tag_node_input01_value_name + "yaxis",
                         tag = tag_node_input01_value_name + "paths"
                     )
+                    with dpg.file_dialog(
+                        directory_selector=True,
+                        show=False,
+                        callback=self.callback_file_dialog,
+                        id=str(node_id) +":file_dialog_data_id",
+                        user_data=tag_node_input01_value_name+ "paths",
+                        width=700 ,
+                        height=400
+                        ):
+                        dpg.add_file_extension(".csv")
                 with dpg.group(horizontal=True):
                     dpg.add_drag_int(
                         label = "N Values",
@@ -91,6 +107,11 @@ class Node:
                         user_data=tag_node_name,
                         callback=self.call_back_checkbox
                     )
+                    dpg.add_button(label= "STOP", callback=self.call_back_stop, user_data=tag_node_name)
+                    dpg.add_input_text(width = small_window_w*0.2, tag=tag_node_input04_value_name)
+                    dpg.add_button(label="Save",user_data=[tag_node_input04_value_name,tag_node_input01_value_name + "paths"],callback=self.call_back_save)
+                    dpg.add_button(label="Save to", callback= lambda: dpg.show_item(str(node_id) +":file_dialog_data_id"), user_data=tag_node_input01_value_name + "paths")
+                
 
                     
         
@@ -116,7 +137,7 @@ class Node:
 
             
 
-            if type(Data) == float:
+            if (type(Data) == float) and self.stop_dict[tag_node_name] != True:
                 self.current_data_dict[tag_node_name].append(Data)
                 k = self.k_indecces[tag_node_name][-1]
                 self.k_indecces[tag_node_name].append(k+1)
@@ -149,26 +170,7 @@ class Node:
                         x_min, 
                         x_max)
                 
-            else:
-                dpg_set_value(
-                    tag_node_input01_value_name + "paths",
-                    [np.array(Data[0]), np.array(Data[1])])   
-                if dpg.does_item_exist(tag_node_input01_value_name +"yaxis") and dpg.does_item_exist(tag_node_input01_value_name +"xaxis"):
-
-                    y_min = int(np.min(Data[1]) - 0.1*np.max(Data[1]))
-                    y_max = int(np.max(Data[1]) + 0.1*np.max(Data[1]))
-                    x_min = int(np.min(Data[0]) - 0.1*np.max(Data[0]))
-                    x_max = int(np.max(Data[0]) + 0.1*np.max(Data[0]))
-
-
-                    dpg.set_axis_limits(
-                        tag_node_input01_value_name +"yaxis", 
-                        y_min,
-                        y_max)
-                    dpg.set_axis_limits(
-                        tag_node_input01_value_name +"xaxis", 
-                        x_min, 
-                        x_max)
+            
         else:
             self.k_indecces[tag_node_name] = [0]
             self.current_data_dict[tag_node_name] = [0]
@@ -193,3 +195,43 @@ class Node:
     ):
         tag_node_name = user_data
         self.inf_data_dict[tag_node_name] = app_data
+
+
+    def callback_file_dialog(
+            self,
+            sender,
+            app_data,
+            user_data
+            ):
+        
+        print("###### filedialog ######")
+        print("Sender: ", sender)
+        print("App Data: ", app_data)
+        print("User Data: ", user_data)
+        print("#########################")
+        plot_values = dpg_get_value(user_data)
+        np.savetxt(app_data["file_path_name"],np.array(plot_values).T,delimiter=";")
+
+       
+    def call_back_save(
+            self,
+            sender,
+            app_data,
+            user_data
+            ):
+        filename = dpg_get_value(user_data[0])
+        plot_values = dpg_get_value(user_data[1])
+        path_cities = "./results/cities_pos/"
+        np.savetxt(path_cities+ filename,np.array(plot_values).T,delimiter=";")
+       
+    def call_back_stop(
+            self,
+            sender,
+            app_data,
+            user_data
+        ):
+        tag_node_name = user_data
+        if self.stop_dict[user_data] == True:
+            self.stop_dict[user_data] = False
+        else:
+            self.stop_dict[user_data] = True

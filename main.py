@@ -15,10 +15,7 @@ def get_settings():
             os.path.join(os.path.dirname(__file__),
                          'settings/setting.json')),
     )
-    #parser.add_argument(
-    #    "--verbose",
-    #    type = bool,
-    #)
+    
     arg = parser.parse_args()
     return arg.setting
 

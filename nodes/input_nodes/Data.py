@@ -119,6 +119,7 @@ class Node():
             app_data,
             user_data
             ):
+        
         print("###### filedialog ######")
         print("Sender: ", sender)
         print("App Data: ", app_data)
@@ -157,29 +158,4 @@ class Node():
                 #dpg.add_text(xi)
                 #dpg.add_text(yi)
 
-    def retrieve_matrix(
-            self,
-            sender,
-            app_data,
-            user_data
-            ):
-        table_tag = user_data
-        rows = dpg.get_item_children(table_tag,1)
-        print(rows)
-        matrix = []
-    
-    
-        for row in rows:
-            row_values = []
-            
-            cells = dpg.get_item_children(row,1)
-            
-            for cell in cells:
-                
-                value = dpg.get_value(cell)
-                row_values.append(value)  
-
-            # Append the row of values to the matrix
-            matrix.append(np.array(row_values))
-        print(matrix)
-        return np.array(matrix).T
+   

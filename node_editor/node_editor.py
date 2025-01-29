@@ -22,7 +22,7 @@ class Node_editor(object):
             self,
             width=1280,
             height=720,
-            width_sidemenu = 400,
+            width_sidemenu = 300,
             pos= [0,0],
             menu_dict = None,
             setting_dict=None,
@@ -44,12 +44,7 @@ class Node_editor(object):
         self._side_menu_width = width_sidemenu
         self.setting_dict = setting_dict
 
-        if menu_dict is None:
-            menu_dict = OrderedDict({
-                'Input Node': 'input_node',
-                'Process Node': 'process_node',
-                'Output Node': 'output_node'
-            })
+    
 
         with dpg.window(
             tag=self._node_tag,
@@ -102,6 +97,7 @@ class Node_editor(object):
                     delink_callback=self._callback_delink,
                     minimap=True,
                     minimap_location=dpg.mvNodeMiniMap_Location_BottomRight,
+                    
                 ):
 
                     pass
@@ -132,7 +128,7 @@ class Node_editor(object):
                         row_container = None
                         for j,node_sub_path in enumerate(node_sub_paths):
                             import_node_path = np.char.replace(node_sub_path,"\\",".")
-                            print(import_node_path)
+                            #print(import_node_path)
                             import_node_path = str(import_node_path)[:-3]
 
                             module = importlib.import_module(import_node_path)
@@ -143,17 +139,17 @@ class Node_editor(object):
 
                             node = module.Node()
                             self._node_instance_list[node.node_tag] = node
-                            print(node.node_tag)
+                            #print(node.node_tag)
                             if row_counter == 0:  # Start a new row for every 2 buttons
                                 with dpg.group(horizontal=True):  # Horizontal group for row
 
                                     row_container = dpg.last_item()
-                            dpg.add_spacing(count=1)
+                            dpg.add_spacer(width=1)
                             dpg.add_button(
                                 label = node_sub_path.split("\\")[-1][:-3],
                                 tag= "sub_menu_" + node_sub_path.split("\\")[-1][:-3],
                                 width=int(self._side_menu_width*0.45),
-                                height=80,
+                                height=60,
                                 parent=row_container,
                                 user_data=node.node_tag,
                                 callback=self._callback_create_node)

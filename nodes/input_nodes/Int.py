@@ -3,7 +3,10 @@
 import dearpygui.dearpygui as dpg
 
 
+_Node_Name = "Int-Node"
 
+def check_if_works():
+    print(f"{_Node_Name} successfully imported")
 
 class Node:
     

@@ -171,36 +171,3 @@ def generate_plot(all_cities_specimen,all_cities_lenghts, save = True):
 
 
 
-#pathdata = os.getcwd() + "\\data\\"
-#pathgraphics = os.getcwd() + "\\graphics\\"
-#N = 1000
-#cities = pd.read_csv(pathdata+"ch150.csv", delimiter=";")
-#
-#
-#cities1 = np.array([[x,y] for x,y in zip(cities["x"],cities["y"]) ])
-##cities1 = cities1[0:10]
-#
-##all_cities_specimen = np.array([cities1 for n in range(8)])
-##cities1 = np.array([[0,0], [1,1], [0,1], [1,0]])
-#all_cities_specimen = create_diversity(cities1,8)
-#all_cities_lenghts = calculate_lenght(all_cities_specimen)
-#
-#Tstart = 10
-#q = 0.1
-#time1 = time.time()
-#for k in range(N):
-#    #print(f"################## k = {k} ######################")
-#    temp = Tstart*((k+1)**(-q))
-#    survivors = choose_survivors(all_cities_specimen,all_cities_lenghts)
-#    all_cities_specimen = mate(survivors)
-#    for n in range(all_cities_specimen.shape[1]):        
-#        all_cities_specimen , all_cities_lenghts = mutation(all_cities_specimen,temp,all_cities_lenghts)
-#
-#    all_cities_lenghts = calculate_lenght(all_cities_specimen)
-#time2 = time.time()
-#print(f"calculation took : {time2 - time1 } s")
-#np.savetxt("bestpath.csv",all_cities_specimen[np.argmin(all_cities_lenghts)],delimiter=";")
-##print(calculate_lenght(all_cities_specimen))
-#temp = lambda k,Tstart,q: Tstart*((k+1)**(-q))
-#
-#generate_plot(all_cities_specimen,all_cities_lenghts)

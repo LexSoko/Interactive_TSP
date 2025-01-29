@@ -13,7 +13,7 @@ class Node:
     k_indecces = {}
     current_data_dict = {}
     lenght_datastream_dict = {}
-
+    inf_data_dict = {}
     def __init__(self):
         pass
 
@@ -30,12 +30,18 @@ class Node:
         tag_node_input01_name = tag_node_name + ":" + "Float" + ":Input01"
         tag_node_input01_value_name = tag_node_name +":Float" + ":Input01Value"
 
+        tag_node_input02_name = tag_node_name + ":" + "Int" + ":Input02"
+        tag_node_input02_value_name = tag_node_name +":Int" + ":Input02Value"
+
+        tag_node_input03_name = tag_node_name + ":" + "Bool" + ":Input03"
+        tag_node_input03_value_name = tag_node_name +":Bool" + ":Input03Value"
 
         self._opencv_setting_dict = opencv_setting_dict
         small_window_w = self._opencv_setting_dict['result_width']
         small_window_h = self._opencv_setting_dict['result_height']
 
         self.lenght_datastream_dict[tag_node_name] = 400
+        self.inf_data_dict[tag_node_name] = False
         self.k_indecces[tag_node_name] = [0]
         self.current_data_dict[tag_node_name] = [0]
         self._default_xdata = np.arange(0, 30, 1)
@@ -71,6 +77,20 @@ class Node:
                         parent = tag_node_input01_value_name + "yaxis",
                         tag = tag_node_input01_value_name + "paths"
                     )
+                with dpg.group(horizontal=True):
+                    dpg.add_drag_int(
+                        label = "N Values",
+                        width=50,
+                        tag= tag_node_input02_value_name,
+                        default_value= self.lenght_datastream_dict[tag_node_name],
+                        callback=self.call_back_datastream_size,
+                        user_data=tag_node_name
+                    )
+                    dpg.add_checkbox(
+                        label="Full Data",
+                        user_data=tag_node_name,
+                        callback=self.call_back_checkbox
+                    )
 
                     
         
@@ -94,7 +114,7 @@ class Node:
             
             Data = dpg_get_value(link[0] + "Value")
 
-            print(Data)
+            
 
             if type(Data) == float:
                 self.current_data_dict[tag_node_name].append(Data)
@@ -102,7 +122,7 @@ class Node:
                 self.k_indecces[tag_node_name].append(k+1)
                 max_lenght = self.lenght_datastream_dict[tag_node_name]
 
-                if len(self.current_data_dict[tag_node_name]) > max_lenght:
+                if (len(self.current_data_dict[tag_node_name]) > max_lenght) and (self.inf_data_dict[tag_node_name] != True):
                     self.k_indecces[tag_node_name] = self.k_indecces[tag_node_name][-max_lenght:]
                     self.current_data_dict[tag_node_name] = self.current_data_dict[tag_node_name][-max_lenght:]
                 #print(self.current_data_dict)
@@ -155,3 +175,21 @@ class Node:
         
 
         return None, None
+    
+    def call_back_datastream_size(
+            self,
+            sender,
+            app_data,
+            user_data
+    ):
+        tag_node_name = user_data
+        self.lenght_datastream_dict[tag_node_name]
+
+    def call_back_checkbox(
+            self,
+            sender,
+            app_data,
+            user_data
+    ):
+        tag_node_name = user_data
+        self.inf_data_dict[tag_node_name] = app_data

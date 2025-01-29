@@ -125,14 +125,14 @@ class Node:
                         with dpg.group(horizontal=False):
                                     dpg.add_input_int(
                                     tag=tag_node_input03_value_name,
-                                    label="Population Size",
+                                    label="Pop Size",
                                     width=80,
                                     default_value=4, 
                                     callback=self._call_back_Pop_size, 
                                     user_data= [tag_node_output01_value_name + "cities_pos",tag_node_name])
                                     dpg.add_input_int(
                                     tag=tag_node_input04_value_name,
-                                    label="Number Mutations",
+                                    label="N Mutations",
                                     width=80,
                                     default_value=self.n_mutations_dict[tag_node_name], 
                                     callback=self._call_back_mutations, 
@@ -145,19 +145,20 @@ class Node:
                                     dpg.add_button(label="RESET K", callback=self._call_back_reset, user_data=tag_node_name)
                                     
                             with dpg.group(horizontal=True):
-                                dpg.add_spacer(width=20)
+                                dpg.add_spacer(width=5)
                                 dpg.add_drag_float(
                                     tag=tag_node_input05_value_name,
                                     label = "Tstart",
                                     width = 50,
                                     default_value=self.tstart_dict[tag_node_name],
+                                    min_value= 0.1,
                                     callback = self._call_back_tstart,
                                     user_data= tag_node_name
                                 )
                                 dpg.add_drag_float(
                                     tag=tag_node_input06_value_name,
                                     label = "q",
-                                    width = 50,
+                                    width = 40,
                                     default_value=self.q_dict[tag_node_name],
                                     callback = self._call_back_q,
                                     user_data= tag_node_name

@@ -3,6 +3,15 @@ import dearpygui.dearpygui as dpg
 import numpy as np
 
 def build_coordinate_list( node_source_paths, side_menu_width):
+    """depriciated 
+
+    Args:
+        node_source_paths (str: paths to node scripts to be executed for callback
+        side_menu_width (str): _description_
+
+    Returns:
+        List: coordinates for buttons
+    """
     number_of_nodes = len(node_source_paths)
     coordinates_buttons = []
     for i in range(0,number_of_nodes):
@@ -12,7 +21,14 @@ def build_coordinate_list( node_source_paths, side_menu_width):
 def retrieve_matrix(
             table_tag
             ):
-        
+        """lets your retrieve a dataset from a table object in dpg
+
+        Args:
+            table_tag (str): tag of table
+
+        Returns:
+            np.ndarray: matrix with values
+        """
 
         rows = dpg.get_item_children(table_tag,1)
       
@@ -29,7 +45,7 @@ def retrieve_matrix(
                 value = dpg.get_value(cell)
                 row_values.append(value)  
 
-            # Append the row of values to the matrix
+            
             matrix.append(np.array(row_values))
 
         return np.array(matrix).T

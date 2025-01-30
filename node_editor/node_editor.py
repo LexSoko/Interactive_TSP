@@ -255,9 +255,9 @@ class Node_editor(object):
 
             self._node_list.remove(node_id_name)
             if self._debug:
-           
-                 print(self._node_connection_dict)
-                        
+                print(f" connection {self._node_connection_dict}")
+                print(f"nodelist {self._node_list}")  
+                      
             dpg.delete_item(item_id)
         
 

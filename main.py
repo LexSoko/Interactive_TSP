@@ -5,7 +5,9 @@ import json
 import dearpygui.dearpygui as dpg
 import argparse
 from node_editor.node_editor import Node_editor
-
+from pycallgraph2 import PyCallGraph
+from pycallgraph2.output import GraphvizOutput
+from pycallgraph2 import Config
 def get_settings():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -84,5 +86,7 @@ def main():
         
         
     dpg.destroy_context()
+
+
 if __name__ == '__main__':
     main()

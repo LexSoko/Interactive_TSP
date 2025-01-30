@@ -235,12 +235,31 @@ class Node_editor(object):
     
     def _callback_del_key(self):
     
-        #if len(dpg.get_selected_links(self._node_editor_tag)) > 0:
-        #    item_id = dpg.get_selected_links(self._node_editor_tag)
-        #    config = dpg.get_item_configuration(item_id[0])
-        #    destination = config["attr_2"]
-        #    self._node_connection_dict.pop(destination) 
-        #    dpg.delete_item(item_id)
+        if len(dpg.get_selected_nodes(self._node_editor_tag)) > 0:
+            item_id = dpg.get_selected_nodes(self._node_editor_tag)[0]
+        
+            node_id_name = dpg.get_item_alias(item_id)
+            if self._debug:
+                print("###### delete node ######")
+                print(f"Node ID name: {node_id_name}")
+
+            node_id, node_name = node_id_name.split(':')
+            
+            for key in self._node_connection_dict.keys():
+                if (node_id_name in key) and ("Input" in key):
+                    
+                    try:
+                        self._node_connection_dict.pop(key)
+                    except:
+                        pass
+
+            self._node_list.remove(node_id_name)
+            if self._debug:
+           
+                 print(self._node_connection_dict)
+                        
+            dpg.delete_item(item_id)
+        
 
         pass
 

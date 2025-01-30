@@ -8,8 +8,6 @@ def check_if_works():
     print(f"{_Node_Name} successfully imported")
 
 class Node:
-    
-
     node_label = 'Float Value'
     node_tag = 'FloatValue'
 
@@ -23,24 +21,19 @@ class Node:
         pos=[0, 0],
         opencv_setting_dict=None,
         callback=None,
-    ):
-        
-        tag_node_name = str(node_id) + ':' + self.node_tag
-        tag_node_output01_name = tag_node_name + ':' + "Float" + ':Output01'
-        tag_node_output01_value_name = tag_node_name + ':' + "Float" + ':Output01Value'
-
-       
+    ):   
+        tag_node_name = str(node_id) + ":" + self.node_tag
+        tag_node_output01_name = tag_node_name + ':' + "Float" + ":Output01"
+        tag_node_output01_value_name = tag_node_name + ':' + "Float" + ":Output01Value"
         self._opencv_setting_dict = opencv_setting_dict
-        small_window_w = self._opencv_setting_dict['input_window_width']
+        small_window_w = self._opencv_setting_dict["input_window_width"]
 
-        
         with dpg.node(
                 tag=tag_node_name,
                 parent=parent,
                 label=self.node_label,
                 pos=pos,
         ):
-            
             with dpg.node_attribute(
                     tag=tag_node_output01_name,
                     attribute_type=dpg.mvNode_Attr_Output,
@@ -52,9 +45,7 @@ class Node:
                     default_value=0,
                     callback=callback,
                 )
-
         return tag_node_name
-
     def update(
         self,
         node_id,
@@ -63,7 +54,7 @@ class Node:
         node_result_dict,
     ):
         return None, None
-
+    
     def close(self, node_id):
         pass
 

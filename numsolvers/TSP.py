@@ -9,6 +9,15 @@ import time
 
 
 def calculate_lenght(arrays):
+    """
+    calculates total lenght of a poplulation of city arrays
+
+    Args:
+        arrays (np.ndarray): cities array
+
+    Returns:
+        np.ndarray: lenghts for each city array
+    """
     lenghts = np.empty(len(arrays))
     for i, array in enumerate(arrays):
         shifted_array = np.roll(array, -1, axis=0)
@@ -18,6 +27,14 @@ def calculate_lenght(arrays):
     return lenghts
 
 def make_loop(new_path):
+    """intended for plotting to close the gap between the start city and the end city
+
+    Args:
+        new_path (np.ndarray): path to create loop
+
+    Returns:
+        np.ndarray: looped path
+    """
     new_path = np.concatenate([new_path, [new_path[0]]],axis=0)
     
     x = new_path.T[0]
@@ -30,6 +47,18 @@ def mutation(
     temperature: np.float64,
     start_lenghts: np.ndarray
     ):
+    """mutations that are applied to the cities array population. This mutation is an annealing process.
+        different to a genetic algorithm the mutation acceptance is based on the temperature of the system.
+        the idea was to have sort of an outside parameter which can affect the population
+
+    Args:
+        cities_pos_pop (np.ndarray): population of cities arrays
+        temperature (np.float64): temperature of the system
+        start_lenghts (np.ndarray): lenghts of city paths which is modified after each mutation
+
+    Returns:
+        np.ndarray , np.ndarray: modified population, new lenghts
+    """
     
     for n, city_indv in enumerate(cities_pos_pop):
         a = np.random.randint(0,len(cities_pos_pop[0]))
@@ -61,6 +90,18 @@ def mutation(
 
 @nb.njit
 def choose_survivors(old_generation,lenghts):
+    """
+    chooses random pairs of the population and compares them
+    the one which has the shorter path survives.
+    kind of a battle to the death in the colosseum as i imagine it
+
+    Args:
+        old_generation (np.ndarray): old population
+        lenghts (np.ndarray): lenghts of old population
+
+    Returns:
+        np.ndarray: survivors half of the old population
+    """
     mid = len(old_generation)//2
     indeces = np.arange(0,len(old_generation))
     np.random.shuffle(indeces)
@@ -77,28 +118,40 @@ def choose_survivors(old_generation,lenghts):
     return survivors
 
 @nb.njit
-def mate(survivors_a:np.ndarray):
-    offspring = np.empty((int(len(survivors_a)*2), len(survivors_a[0]), len(survivors_a[0][0])))
-    offspring[0:len(survivors_a),:,:] = survivors_a
-    
-    indices = np.arange(len(survivors_a), dtype=np.int32)  
-    np.random.shuffle(indices)  
-    pairs = np.zeros((len(survivors_a), 2), dtype=np.int32)
+def mate(survivors:np.ndarray):
+    """
+    the kinky part of the algorithm
+    chooses random pairs of a population and exchanges the genetic information
+    a sub sequence of the path of each parent is taken out and injected into the other one
+    the other citys are rearanged to incorparate the subsequence path
 
-    for i in range(0, len(survivors_a) - 1, 2):
+    Args:
+        survivors (np.ndarray): survivors of the battle to the death
+
+    Returns:
+        np.ndarray: new population double the survivors
+    """
+    offspring = np.empty((int(len(survivors)*2), len(survivors[0]), len(survivors[0][0])))
+    offspring[0:len(survivors),:,:] = survivors
+    
+    indices = np.arange(len(survivors), dtype=np.int32)  
+    np.random.shuffle(indices)  
+    pairs = np.zeros((len(survivors), 2), dtype=np.int32)
+
+    for i in range(0, len(survivors) - 1, 2):
         pairs[i] = (indices[i], indices[i + 1])
         pairs[i + 1] = (indices[i + 1], indices[i])
 
     for n, (i , j) in enumerate(pairs):
-        a = np.random.randint(0,len(survivors_a[i]) - 1)
-        b = np.random.randint(a,len(survivors_a[i]))
+        a = np.random.randint(0,len(survivors[i]) - 1)
+        b = np.random.randint(a,len(survivors[i]))
        
-        sub_path_i = list(survivors_a[i][a:b])
-        remaining_path_j = np.empty((len(survivors_a[i]) - len(sub_path_i), survivors_a[j].shape[1]))
+        sub_path_i = list(survivors[i][a:b])
+        remaining_path_j = np.empty((len(survivors[i]) - len(sub_path_i), survivors[j].shape[1]))
         
         count = 0
         
-        for item in survivors_a[j]:
+        for item in survivors[j]:
             found = False
             for sub_item in sub_path_i:
                 if np.all(item == sub_item):
@@ -111,16 +164,25 @@ def mate(survivors_a:np.ndarray):
             
         remaining_path_j = list(remaining_path_j)
         
-        for k in range(0, len(survivors_a[i])):
+        for k in range(0, len(survivors[i])):
             if a <= k < b:
-                offspring[n +len(survivors_a),k,:] = sub_path_i.pop(0)
+                offspring[n +len(survivors),k,:] = sub_path_i.pop(0)
                 
             else:
-                offspring[n+len(survivors_a),k,:] = remaining_path_j.pop(0)
+                offspring[n+len(survivors),k,:] = remaining_path_j.pop(0)
 
     return offspring
 
 def create_diversity(cities,n = 2):
+    """creates random starting sequences from one
+
+    Args:
+        cities (np.ndarray): array with cites positions
+        n (int, optional):number of new paths created. Defaults to 2.
+
+    Returns:
+        np.ndarray: random population
+    """
     population = []
     for i in range(n):
         shuffled_arr = cities.copy()
@@ -130,12 +192,21 @@ def create_diversity(cities,n = 2):
     
 
 def run_mixed_fixedN(N,temp_func):
+    """runnes fixed amount of iteratuons
+
+    Args:
+        N (int): number of iterations
+        temp_func (Callable): temperature function used
+
+    Returns:
+        np.ndarray, np.ndarray: optimized paths, corresponding lenghts
+    """
     time1 = time.time()
     for k in range(N):
         temp = temp_func(k)
         survivors = choose_survivors(all_cities_specimen,all_cities_lenghts)
         all_cities_specimen = mate(survivors)
-        for n in range(all_cities_specimen.shape[1]):        
+        for n in range(all_cities_specimen.shape[1]**2):        
             all_cities_specimen , all_cities_lenghts = mutation(all_cities_specimen,temp,all_cities_lenghts)
         all_cities_lenghts = calculate_lenght(all_cities_specimen)
     time2 = time.time()
@@ -143,17 +214,24 @@ def run_mixed_fixedN(N,temp_func):
     return all_cities_specimen, all_cities_lenghts
 
 def run_mixed(all_cities_specimen, all_cities_lenghts,number_mutations,temp):
-    
-    
-        
+    """
+    implementation used for gui, runs one sweep 
+
+    Args:
+        all_cities_specimen (np.ndarray): cities population
+        all_cities_lenghts (np.ndarray): corresponding lenghts
+        number_mutations (Int): number of mutations applied
+        temp (Float): temperature for acceptance probability
+
+    Returns:
+        np.ndarray,np.ndarray: new cities population, new corresponding lenghts
+    """
     survivors = choose_survivors(all_cities_specimen,all_cities_lenghts)
     all_cities_specimen = mate(survivors)
     for n in range(number_mutations):        
         all_cities_specimen , all_cities_lenghts = mutation(all_cities_specimen,temp,all_cities_lenghts)
     all_cities_lenghts = calculate_lenght(all_cities_specimen)
 
-    #index_shortest_path = np.argmin(all_cities_lenghts)
-    
     return all_cities_specimen, all_cities_lenghts
 
 def generate_plot(all_cities_specimen,all_cities_lenghts, save = True):

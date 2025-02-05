@@ -27,6 +27,20 @@ class Node:
         opencv_setting_dict=None,
         callback=None,
     ):
+        """
+        adds a node as a child to the node editor
+        this node contains a plot window, a input text for the file name, a save button , and a save to button for file dialog
+
+        Args:
+            parent (str): node editor tag
+            node_id (int): unique node id
+            pos (list, optional): position of added node. Defaults to [0, 0].
+            opencv_setting_dict (dict, optional): settings for size of node windows. Defaults to None.
+            callback (callable, optional): callback function for adding (reserved for later implementation). Defaults to None.
+
+        Returns:
+            str: the uniquelly generated node tag for the added node
+        """
         tag_node_name = str(node_id) + ':' + self.node_tag
         
         tag_node_input01_name = tag_node_name + ":" + "Float" + ":Input01"
@@ -121,9 +135,18 @@ class Node:
         self,
         node_id,
         connection_list,
-        node_image_dict,
-        node_result_dict,
     ):
+        """
+        updates the plotted data.
+        takes and datastream of float values and either shows only some fixed amount at a time or all data since full data checkbox is true
+
+        Args:
+            node_id (int): id of the node
+            connection_list (dict): dictionary of all connection specified by the input connection
+
+        Returns:
+            any: None , None (reserved for later implementations)
+        """
         tag_node_name = str(node_id) + ':' + self.node_tag
         tag_node_input01_name = tag_node_name + ":" + "Float" + ":Input01"
         tag_node_input01_value_name = tag_node_name +":Float" + ":Input01Value"
@@ -146,7 +169,7 @@ class Node:
                 if (len(self.current_data_dict[tag_node_name]) > max_lenght) and (self.inf_data_dict[tag_node_name] != True):
                     self.k_indecces[tag_node_name] = self.k_indecces[tag_node_name][-max_lenght:]
                     self.current_data_dict[tag_node_name] = self.current_data_dict[tag_node_name][-max_lenght:]
-                #print(self.current_data_dict)
+                
                 dpg_set_value(
                     tag_node_input01_value_name + "paths",
                     [np.array(self.k_indecces[tag_node_name]), np.array(self.current_data_dict[tag_node_name])])
@@ -203,7 +226,14 @@ class Node:
             app_data,
             user_data
             ):
+        """
+        Save to selected folder
         
+        Args:
+            sender (str): tag of container the callback originates from
+            app_data (dict): data associated with the dpg container, file dialog information
+            user_data (any): custom data transmitted, in this case tag of the plot data container
+        """
         print("###### filedialog ######")
         print("Sender: ", sender)
         print("App Data: ", app_data)
@@ -219,10 +249,21 @@ class Node:
             app_data,
             user_data
             ):
+        """
+        Save to results folder
+        
+        Args:
+            sender (str): tag of container the callback originates from
+            app_data (any): data associated with the dpg container
+            user_data (any): custom data transmitted, in this case tag of the input text and the plot data
+        """
         filename = dpg_get_value(user_data[0])
         plot_values = dpg_get_value(user_data[1])
         path_cities = "./results/cities_pos/"
-        np.savetxt(path_cities+ filename,np.array(plot_values).T,delimiter=";")
+        if len(filename) < 50:
+            np.savetxt(path_cities+ filename,np.array(plot_values).T,delimiter=";")
+        else:
+            print("filename to long")
        
     def call_back_stop(
             self,
@@ -230,6 +271,16 @@ class Node:
             app_data,
             user_data
         ):
+        """
+        Stops the plotting of incoming data by editing the bool value of a dict
+        this dict stores the state information of every associated node
+
+        Args:
+            sender (str): tag of container the callback originates from
+            app_data (any): data associated with the dpg container
+            user_data (any): custom data transmitted, in this case the nodetag
+        """
+        print(app_data)
         tag_node_name = user_data
         if self.stop_dict[user_data] == True:
             self.stop_dict[user_data] = False

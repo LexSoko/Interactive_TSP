@@ -34,6 +34,21 @@ class Node:
         opencv_setting_dict=None,
         callback=None,
     ):
+        """
+        generates the neccecary input and output containers 
+        consists of a plotwindow, two int inputs, two float inputs, and three buttons
+
+        Args:
+            parent (str): node editor tag
+            node_id (int): unique node id
+            pos (list, optional): position of added node. Defaults to [0, 0].
+            opencv_setting_dict (dict, optional): settings for size of node windows. Defaults to None.
+            callback (callable, optional): callback function for adding (reserved for later implementation). Defaults to None.
+
+        Returns:
+            str: the uniquelly generated node tag for the added node
+        """
+        
         tag_node_name = str(node_id) + ':' + self.node_tag
         
         tag_node_input01_name = tag_node_name + ":Cities" + ":Input01"
@@ -78,6 +93,7 @@ class Node:
         self.n_mutations_dict[tag_node_name] = 500
         self.tstart_dict[tag_node_name] = 10
         self.q_dict[tag_node_name] = 0.1
+
         with dpg.node(
             tag = tag_node_name,
             parent=parent,
@@ -220,9 +236,20 @@ class Node:
         self,
         node_id,
         connection_list,
-        node_image_dict,
-        node_result_dict,
     ):
+        """
+        runs the simulation for each update cycle, temperature changed based on the input parameters for each iteration
+        if connected to a cities output, stores the input into the plot container and generates a population which then is tored into an internal dict.
+        the lenghts of all population members are also saved.
+        the simulation edits the arrays associated with the node tag each cycle and plots the best path
+
+        node_id (int): id of the node
+            connection_list (dict): dictionary of all connection specified by the input connection
+
+        Returns:
+            any: None , None (reserved for later implementations)
+        """
+
         tag_node_name = str(node_id) + ':' + self.node_tag
         tag_node_input01_name = tag_node_name + ":" + "Cities" + ":Input01"
         tag_node_input01_value_name = tag_node_name +":Cities" + ":Input01Value"
@@ -291,9 +318,9 @@ class Node:
         if self.run_dict[tag_node_name] == True:
             
             self.k_indecces[tag_node_name] += 1
-            #print(f"k index = {self.k_indecces[tag_node_name]} tag_node_name = {tag_node_name}")
+        
             temp = self.tstart_dict[tag_node_name]*self.k_indecces[tag_node_name]**(-self.q_dict[tag_node_name])
-            #print(f"temp = {temp}")
+         
             all_cities_specimen, all_cities_lenghts = tsp.run_mixed(
                 self.all_cities_specimen_dict[tag_node_name],
                 self.all_cities_lenghts_dict[tag_node_name],
@@ -303,9 +330,7 @@ class Node:
             self.all_cities_specimen_dict[tag_node_name] = all_cities_specimen
             self.all_cities_lenghts_dict[tag_node_name] = all_cities_lenghts
             best_route = np.array(all_cities_specimen[np.argmin(all_cities_lenghts)])
-            #print(f"number pop {len(all_cities_lenghts)}")
-            #print(f"best route = {best_route}")
-            
+         
             dpg_set_value(
                 tag_node_output01_value_name + "cities_pos",
                 [np.array(best_route.T[0]),np.array(best_route.T[1])])
@@ -320,9 +345,7 @@ class Node:
                 tag_node_output03_value_name,
                 temp
             )
-        #else:
-
-            #print("OH NOOOOOOO")
+       
         
 
         return None, None

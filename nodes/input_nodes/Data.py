@@ -19,6 +19,21 @@ class Node():
         opencv_setting_dict=None,
         callback=None,
     ):
+        """
+        creates a table object where the data from a selected file is displayed
+        also creates an invisible scatter plotcontainer where the data is loaded into, 
+        because as it seems it is the only way to store arrays in the dpg library
+
+        Args:
+            parent (str): node editor tag
+            node_id (int): unique node id
+            pos (list, optional): position of added node. Defaults to [0, 0].
+            opencv_setting_dict (dict, optional): settings for size of node windows. Defaults to None.
+            callback (callable, optional): callback function for adding (reserved for later implementation). Defaults to None.
+
+        Returns:
+            str: the uniquelly generated node tag for the added node
+        """
         tag_node_name = str(node_id) + ":" + self.node_tag
 
         tag_node_input01_name = tag_node_name + ":Cities:Input01"
@@ -105,8 +120,6 @@ class Node():
         self,
         node_id,
         connection_list,
-        node_image_dict,
-        node_result_dict,
     ):
         return None, None
 
@@ -119,7 +132,16 @@ class Node():
             app_data,
             user_data
             ):
+        """
+        Extracts a path to a file 
+        updates the table contents based on data
+        stores the arrays into a scatter container
         
+        Args:
+            sender (str): tag of container the callback originates from
+            app_data (any): data associated with the dpg container, file dialog information
+            user_data (any): custom data transmitted, in this case tag of table and the tag of the plot container
+        """
         print("###### filedialog ######")
         print("Sender: ", sender)
         print("App Data: ", app_data)
@@ -146,7 +168,13 @@ class Node():
             self,
             table_tag,
     ):
-        
+        """
+        based on the table tag finds children of container.
+        the children are the rows, and the rows are parents of inputfloats
+
+        Args:
+            table_tag (str): table tag
+        """
         rows = dpg.get_item_children(table_tag,1)
         for row in rows:
             dpg.delete_item(row)
@@ -155,7 +183,6 @@ class Node():
             row_tag = dpg.add_table_row(parent=table_tag)
             dpg.add_input_float(default_value=xi,parent=row_tag)
             dpg.add_input_float(default_value=yi,parent=row_tag)
-                #dpg.add_text(xi)
-                #dpg.add_text(yi)
+                
 
    

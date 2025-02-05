@@ -1,9 +1,5 @@
 import matplotlib.pyplot as plt
-import pandas as pd
-import os 
-import random as rd
 import numpy as np
-from scipy.linalg import norm
 import numba as nb
 import time
 
@@ -87,6 +83,25 @@ def mutation(
             
     
     return cities_pos_pop , start_lenghts
+
+@nb.njit
+def mutation_genetic(
+        cities_pos_pop: np.ndarray,
+        prob_mut:float = 0.9
+):
+    
+    if prob_mut > 100.0 or prob_mut < 0.0:
+        print("probability must be between 0 and 100")
+        return cities_pos_pop
+    
+    for n, city_indv in enumerate(cities_pos_pop):
+        if np.random.randint(0,1000) < prob_mut*10:
+            a = np.random.randint(0,len(cities_pos_pop[0]))
+            b = np.random.randint(0,len(cities_pos_pop[0]))
+            city_indv[a] , city_indv[b] = city_indv[b] , city_indv[a]       
+            
+    return cities_pos_pop
+
 
 @nb.njit
 def choose_survivors(old_generation,lenghts):

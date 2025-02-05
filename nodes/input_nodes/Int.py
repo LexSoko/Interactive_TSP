@@ -25,7 +25,20 @@ class Node:
         opencv_setting_dict=None,
         callback=None,
     ):
-        
+        """
+        add a int value input which is can be connected to other nodes and dynamicly changed
+
+        Args:
+            parent (str): node editor tag
+            node_id (int): unique node id
+            pos (list, optional): position of added node. Defaults to [0, 0].
+            opencv_setting_dict (dict, optional): settings for size of node windows. Defaults to None.
+            callback (callable, optional): callback function for adding (reserved for later implementation). Defaults to None.
+
+        Returns:
+            str: the uniquelly generated node tag for the added node
+        """
+         
         tag_node_name = str(node_id) + ':' + self.node_tag
         tag_node_output01_name = tag_node_name + ':' + "Int" + ':Output01'
         tag_node_output01_value_name = tag_node_name + ':' + "Int" + ':Output01Value'
@@ -60,8 +73,6 @@ class Node:
         self,
         node_id,
         connection_list,
-        node_image_dict,
-        node_result_dict,
     ):
         return None, None
 

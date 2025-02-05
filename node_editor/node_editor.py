@@ -6,14 +6,27 @@ import numpy as np
 import importlib
 from node_editor.general import dpg_get_value, dpg_set_value
 class Node_editor(object):
+    """
+    creates the two children windows
+    one where the node modules (instances) are imported and their node tags are assigned to buttons -> this is the left sidewindow
+    this buttons all have a callback to create_node which accesses the add_node function of the node instances
+    the other child window is for displaying the actual node editor dpg object. Thats where the the nodes are displayed after adding
+    this class also tracks all connections and instances of the displayed nodes
     
+
+    Args:
+        object (_type_): _description_
+
+    Returns:
+        object: node editor object
+    """
     _node_id = 0
     _node_tag = "Playground"
-    _node_editor_tag = 'NodeEditor'
-    _node_editor_label = 'Node editor'
+    _node_editor_tag = "NodeEditor"
+    _node_editor_label = "Node editor"
     _node_instance_list = {}
     _node_list = []
-    _node_link_list = []
+    
     
     _childwindow_nodeeditor_tag = "node_editor_child"
     _childwindow_sidemenu_tag = "sidemenu_child"
@@ -172,6 +185,15 @@ class Node_editor(object):
 
     # callback runs when user attempts to connect attributes
     def _callback_link(self,sender, link_data):
+        """
+        function executed if link is established
+        compares output and input types, if the same adds a node link and safes the link into node connection dict
+        as only one input is allowed so far, the connection is saved with the input tag name as the key
+
+        Args:
+            sender (str): tag of container the callback originates from
+            link_data (List): the tagnames of the output and input connection
+        """
         # app_data -> (link_id1, link_id2)
         if self._debug:
             print("### link ###")
@@ -203,6 +225,16 @@ class Node_editor(object):
     
     
     def _callback_create_node(self,sender, data, user_data):
+        """
+        gets node from node instance dict based on the tag of the node class which is saved at initialisation of the buttons
+        calls the add_node function of this instance.
+        this gives back the node_tag which is stored into node list 
+
+        Args:
+           sender (str): tag of container the callback originates from
+            app_data (dict): data associated with the dpg container
+            user_data (any): custom data transmitted, in this case tag of the nodeclass 
+        """
         self._node_id += 1
         if self._debug == True:
             print("##### add node ######")
@@ -212,8 +244,10 @@ class Node_editor(object):
         
         node = self._node_instance_list[user_data]
         last_pos = [500, 100]
+
         if self._last_pos is not None:
             last_pos = [self._last_pos[0] + 30, self._last_pos[1] + 30]
+
         tag_name = node.add_node(
             self._node_editor_tag,
             self._node_id,
@@ -234,7 +268,9 @@ class Node_editor(object):
         return self._node_instance_list.get(node_name,None)
     
     def _callback_del_key(self):
-    
+        """
+        removes nodes and their connections from the connection list
+        """
         if len(dpg.get_selected_nodes(self._node_editor_tag)) > 0:
             item_id = dpg.get_selected_nodes(self._node_editor_tag)[0]
         

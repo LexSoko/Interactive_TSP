@@ -97,8 +97,6 @@ class Node:
         self,
         node_id,
         connection_list,
-        node_image_dict,
-        node_result_dict,
     ):
         tag_node_name = str(node_id) + ':' + self.node_tag
         tag_node_input01_name = tag_node_name + ":" + "Cities" + ":Input01"

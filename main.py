@@ -1,13 +1,9 @@
-import time
-import sys
 import os 
 import json
 import dearpygui.dearpygui as dpg
 import argparse
 from node_editor.node_editor import Node_editor
-from pycallgraph2 import PyCallGraph
-from pycallgraph2.output import GraphvizOutput
-from pycallgraph2 import Config
+
 def get_settings():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -23,9 +19,14 @@ def get_settings():
 
 def update_nodes(
         node_editor,
-        node_image_dict = {},
-        node_results = {}
 ):
+    """
+    updates all generated nodes from node_list 
+    each instance of a node class monitors all nodes associated with it
+
+    Args:
+        node_editor (class): node editor instance
+    """
     node_list = node_editor.get_node_list()
     connection_dict = node_editor.get_node_connection_dict()
 
@@ -44,13 +45,11 @@ def update_nodes(
         node_id , node_name = node_name.split(":")
         
         node = node_editor.get_node_instance(node_name)
-        frame, result = node.update(
+        node.update(
             node_id,
             connection_dict,
-            node_image_dict,
-            node_results
             )
-        pass
+        
 
     
 
@@ -75,13 +74,10 @@ def main():
     )
     dpg.show_viewport()
     dpg.set_primary_window(f"{node_editor._node_tag}",True)
-    node_image_dict = {}
-    node_results = {}
+    
     while dpg.is_dearpygui_running():
         
-        update_nodes(node_editor,
-               node_image_dict,
-               node_results)
+        update_nodes(node_editor)
         dpg.render_dearpygui_frame()
         
         

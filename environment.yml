@@ -3,22 +3,18 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - numba=0.60.0=py311hea22821_0
-  - numpy=1.26.4=py311hdab7c0b_0
-  - numpy-base=1.26.4=py311hd01c5d8_0
-  - numpydoc=1.7.0=py311haa95532_0
-  - matplotlib=3.10.0=py311haa95532_0
-  - matplotlib-base=3.10.0=py311he19b0ae_0
-  - matplotlib-inline=0.1.6=py311haa95532_0
-  - glob2=0.7=pyhd3eb1b0_0
-  - importlib-resources==6.4.5
-  - importlib-metadata=8.5.0=py311haa95532_0
-  - importlib_metadata=8.5.0=hd3eb1b0_0
+  - python=3.11.11
+  - numba=0.60.0
+  - numpy=1.26.4
+  - numpydoc=1.7.0
+  - matplotlib=3.10.0
+  - matplotlib-inline=0.1.6
+  - glob2=0.7
+  - importlib-resources=6.4.5
+  - importlib-metadata=8.5.0
+  - pip
   - pip:
-      - dearpygui==1.9.0
-      - importlib-resources==6.4.5
+      - dearpygui==2.0.0
       - jschon==0.11.1
       - numba-progress==1.1.0
       - opencv-contrib-python==4.5.5.64
-     
-prefix: C:\Users\aleks\anaconda3

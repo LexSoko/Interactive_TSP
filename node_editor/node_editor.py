@@ -140,7 +140,7 @@ class Node_editor(object):
                         row_counter = 0  # Track when to create a new row
                         row_container = None
                         for j,node_sub_path in enumerate(node_sub_paths):
-                            import_node_path = np.char.replace(node_sub_path,"\\",".")
+                            import_node_path = np.char.replace(node_sub_path,os.sep,".")
                             #print(import_node_path)
                             import_node_path = str(import_node_path)[:-3]
 

@@ -1,8 +1,6 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import numba as nb
 import time
-
 
 def calculate_lenght(arrays):
     """
@@ -248,19 +246,5 @@ def run_mixed(all_cities_specimen, all_cities_lenghts,number_mutations,temp):
     all_cities_lenghts = calculate_lenght(all_cities_specimen)
 
     return all_cities_specimen, all_cities_lenghts
-
-def generate_plot(all_cities_specimen,all_cities_lenghts, save = True):
-    fig2, ax2  = plt.subplots(4,2, figsize = (16,12))
-    ax2 = ax2.flatten()
-    for i in range(len(all_cities_specimen)):
-        ax2[i].plot(all_cities_specimen[i].T[0],all_cities_specimen[i].T[1], label = f"lenght = {all_cities_lenghts[i]}")
-        ax2[i].scatter(all_cities_specimen[i].T[0],all_cities_specimen[i].T[1],marker="+", c="r")
-        ax2[i].legend()
-    print(all_cities_lenghts)
-    if save == True:
-        fig2.savefig("genetic_annealing_combined.pdf")
-    plt.show()
-
-
 
 
